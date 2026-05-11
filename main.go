@@ -19,7 +19,11 @@ func main() {
 		{Name: "Jupiter Trust", Prefix: "8000"},
 	}
 	cardNumber := "4000123456789017"
-	fmt.Println(DetectBank(cardNumber, banks))
+	if res := DetectBank(cardNumber, banks); res == nil {
+		fmt.Println("не определён")
+	} else {
+		fmt.Println(res)
+	}
 	fmt.Println(LuhnCheck(cardNumber))
 
 }
