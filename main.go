@@ -16,7 +16,6 @@ func main() {
 		{Name: "Mars Credit Union", Prefix: "5000"},
 		{Name: "Venus Express", Prefix: "6000"},
 		{Name: "Saturn Ring", Prefix: "7000"},
-		{Name: "Jupiter Trust", Prefix: "8000"},
 	}
 	cardNumber := "4000123456789017"
 	if res := DetectBank(cardNumber, banks); res == nil {
