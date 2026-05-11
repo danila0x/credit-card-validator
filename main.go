@@ -18,13 +18,13 @@ func main() {
 		{Name: "Saturn Ring", Prefix: "7000"},
 	}
 	cardNumber := "4000123456789017"
+	valid := LuhnCheck(cardNumber)
+	fmt.Printf("Валиден по Луне: %t\n", valid)
 	if res := DetectBank(cardNumber, banks); res == nil {
-		fmt.Println("не определён")
+		fmt.Println("Банк: не определён")
 	} else {
-		fmt.Println(res)
+		fmt.Printf("Банк: %s", res.Name)
 	}
-	fmt.Println(LuhnCheck(cardNumber))
-
 }
 
 func LuhnCheck(cardNumber string) bool {
