@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -11,11 +13,12 @@ type Bank struct {
 }
 
 func main() {
-	banks := []Bank{
-		{Name: "Lunar Bank", Prefix: "4000"},
-		{Name: "Mars Credit Union", Prefix: "5000"},
-		{Name: "Venus Express", Prefix: "6000"},
-		{Name: "Saturn Ring", Prefix: "7000"},
+	banks, err := loadBankData("C:\\Users\\Мой компьютер\\credit-card-validator\\banks12.txt")
+	if err != nil {
+		fmt.Printf("Не удалось загрузить банки: %v\n", err)
+		return
+	} else {
+		fmt.Printf("Загружено банков: %d\n", len(banks))
 	}
 	cardNumber := "4000123456789017"
 	valid := LuhnCheck(cardNumber)
@@ -23,8 +26,41 @@ func main() {
 	if res := DetectBank(cardNumber, banks); res == nil {
 		fmt.Println("Банк: не определён")
 	} else {
-		fmt.Printf("Банк: %s", res.Name)
+		fmt.Printf("Банк: %s\n", res.Name)
 	}
+}
+
+func loadBankData(path string) ([]Bank, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	var banks []Bank
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		parts := strings.Split(line, ",")
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("неверный формат строки: %q", line)
+		}
+		for i := range parts {
+			parts[i] = strings.TrimSpace(parts[i])
+		}
+		newBank := Bank{
+			Name:   parts[0],
+			Prefix: parts[1],
+		}
+		banks = append(banks, newBank)
+	}
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Ошибка при чтении:", err)
+	}
+	return banks, nil
 }
 
 func LuhnCheck(cardNumber string) bool {
