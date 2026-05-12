@@ -58,7 +58,7 @@ func loadBankData(path string) ([]Bank, error) {
 		banks = append(banks, newBank)
 	}
 	if err := scanner.Err(); err != nil {
-		fmt.Println("Ошибка при чтении:", err)
+		return nil, fmt.Errorf("Ошибка при чтении: %w", err)
 	}
 	return banks, nil
 }
