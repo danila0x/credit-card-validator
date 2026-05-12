@@ -13,7 +13,7 @@ type Bank struct {
 }
 
 func main() {
-	banks, err := loadBankData("C:\\Users\\Мой компьютер\\credit-card-validator\\banks12.txt")
+	banks, err := loadBankData("banks.txt")
 	if err != nil {
 		fmt.Printf("Не удалось загрузить банки: %v\n", err)
 		return
