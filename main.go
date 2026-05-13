@@ -5,6 +5,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
+)
+
+const (
+	cardNumberMinLength = 13
+	cardNumberMaxLength = 19
 )
 
 type Bank struct {
@@ -23,13 +29,20 @@ func main() {
 	for {
 		cardNumber := getUserInput()
 		if cardNumber == "" {
-			fmt.Println("Введена пустая строка. Программа завершена.")
+			fmt.Println("Выход. Программа завершена.")
 			break
 		} else {
-			valid := LuhnCheck(cardNumber)
-			fmt.Printf("Валиден по Луне: %t\n", valid)
+			err := validateInput(cardNumber)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			if valid := LuhnCheck(cardNumber); valid == false {
+				fmt.Println("Ошибка: номер не прошёл проверку Луна")
+				continue
+			}
 			if res := DetectBank(cardNumber, banks); res == nil {
-				fmt.Println("Банк: не определён")
+				fmt.Println("Банк не найден")
 			} else {
 				fmt.Printf("Банк: %s\n", res.Name)
 			}
@@ -71,7 +84,7 @@ func loadBankData(path string) ([]Bank, error) {
 }
 
 func getUserInput() string {
-	fmt.Print("Введите номер карты:")
+	fmt.Print("Введите номер карты (или Enter для выхода):")
 	reader := bufio.NewReader(os.Stdin)
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
@@ -111,6 +124,21 @@ func DetectBank(cardNumber string, banks []Bank) *Bank {
 		if strings.HasPrefix(cardNumber, banks[i].Prefix) {
 			return &banks[i]
 		}
+	}
+	return nil
+}
+
+func validateInput(cardNumber string) error {
+	for _, char := range cardNumber {
+		if !unicode.IsDigit(char) {
+			return fmt.Errorf("Ошибка: номер должен содержать только цифры")
+		}
+	}
+	if len(cardNumber) < cardNumberMinLength {
+		return fmt.Errorf("Введенная строка: (%d символов). Ошибка: номер должен содержать от 13 до 19 цифр", len(cardNumber))
+	}
+	if len(cardNumber) > cardNumberMaxLength {
+		return fmt.Errorf("Введенная строка: (%d символов). Ошибка: номер должен содержать от 13 до 19 цифр", len(cardNumber))
 	}
 	return nil
 }
