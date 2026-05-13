@@ -20,13 +20,20 @@ func main() {
 	} else {
 		fmt.Printf("Загружено банков: %d\n", len(banks))
 	}
-	cardNumber := "4000123456789017"
-	valid := LuhnCheck(cardNumber)
-	fmt.Printf("Валиден по Луне: %t\n", valid)
-	if res := DetectBank(cardNumber, banks); res == nil {
-		fmt.Println("Банк: не определён")
-	} else {
-		fmt.Printf("Банк: %s\n", res.Name)
+	for {
+		cardNumber := getUserInput()
+		if cardNumber == "" {
+			fmt.Println("Введена пустая строка. Программа завершена.")
+			break
+		} else {
+			valid := LuhnCheck(cardNumber)
+			fmt.Printf("Валиден по Луне: %t\n", valid)
+			if res := DetectBank(cardNumber, banks); res == nil {
+				fmt.Println("Банк: не определён")
+			} else {
+				fmt.Printf("Банк: %s\n", res.Name)
+			}
+		}
 	}
 }
 
@@ -61,6 +68,16 @@ func loadBankData(path string) ([]Bank, error) {
 		return nil, fmt.Errorf("Ошибка при чтении: %w", err)
 	}
 	return banks, nil
+}
+
+func getUserInput() string {
+	fmt.Print("Введите номер карты:")
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+	input = strings.ReplaceAll(input, " ", "")
+	input = strings.ReplaceAll(input, "-", "")
+	return input
 }
 
 func LuhnCheck(cardNumber string) bool {
