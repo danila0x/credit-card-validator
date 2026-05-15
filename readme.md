@@ -37,6 +37,33 @@ Mars Credit Union,5000
 Venus Express Bank,6000
 ```
 2. Launch the program and start entering the card number
+
+Luhn algorithm
+```go
+func LuhnCheck(cardNumber string) bool {
+	if cardNumber == "" {
+		return false
+	}
+	sum := 0
+	isSecond := false
+	for i := len(cardNumber) - 1; i >= 0; i-- {
+		digit := int(cardNumber[i] - '0')
+		if digit < 0 || digit > 9 {
+			return false
+		}
+		if isSecond {
+			digit *= 2
+			if digit > 9 {
+				digit -= 9
+			}
+		}
+		sum += digit
+		isSecond = !isSecond
+	}
+	return sum%10 == 0
+}
+```
+
 3. To exit the program, press Enter or insert an empty line.
 
 ## Project structure
